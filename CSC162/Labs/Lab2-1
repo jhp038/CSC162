@@ -1,0 +1,324 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "button": false,
+    "new_sheet": false,
+    "run_control": {
+     "read_only": false
+    }
+   },
+   "source": [
+    "# Lab 2: Runtime Analysis"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "button": false,
+    "new_sheet": false,
+    "run_control": {
+     "read_only": false
+    }
+   },
+   "source": [
+    "## <font color=DarkRed>Your Exercise: Find the $k$th Smallest Number</font>\n",
+    "\n",
+    "Given a list of numbers in random order write a linear time algorithm to find the $k$th smallest number in the list. Explain why your algorithm is linear."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "button": false,
+    "new_sheet": false,
+    "run_control": {
+     "read_only": false
+    }
+   },
+   "source": [
+    "## <font color=green>Your Solution</font>\n",
+    "\n",
+    "*Use a variety of code, Markdown (text) cells below to create your solution. Nice outputs would be timing results, and even plots. You will be graded not only on correctness, but the clarity of your code, descriptive text and other output. Keep it succinct.*"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "button": false,
+    "new_sheet": false,
+    "run_control": {
+     "read_only": false
+    }
+   },
+   "outputs": [],
+   "source": [
+    "import random\n",
+    "import numpy as np\n",
+    "\n",
+    "\n",
+    "def main_function(arry,k):\n",
+    "    print('Current K= ' + str(k) )\n",
+    "    #if an array is small, then just sort it and return kth array.\n",
+    "    arry_len = len(arry)\n",
+    "    if arry_len < 5:\n",
+    "        sorted_arry = sorted(arry)\n",
+    "        print('')\n",
+    "        print('Answer: ' + str(sorted_arry[k-1]))\n",
+    "        return \n",
+    "    else:\n",
+    "        new_arry = []\n",
+    "        median_arry = []\n",
+    "        for i in range(0,len(arry),5):\n",
+    "            chunked_array=arry[i:i+5]\n",
+    "            new_arry.append(chunked_array) #chunking 5 elements\n",
+    "            median_arry.append(np.median(chunked_array))\n",
+    "\n",
+    "        median_arry = sorted(median_arry)\n",
+    "        pivot = np.median(median_arry) #pivot\n",
+    "        print('Pivot is: ' + str(pivot))\n",
+    "\n",
+    "        L = []\n",
+    "        R = []\n",
+    "        \n",
+    "        #Comparing array with pivot and assign values to L and R\n",
+    "        for i in range(len(arry)):\n",
+    "            if arry[i] <= pivot:\n",
+    "                L.append(arry[i])\n",
+    "            elif arry[i] > pivot:\n",
+    "                R.append(arry[i])\n",
+    "\n",
+    "        if len(L) + 1 == k: #If length of L is same is K, find min from R for answer\n",
+    "            print('')\n",
+    "            print('Answer : ' + str(min(R)))\n",
+    "        if len(L) +1 < k: # if K is bigger than length if R, dicard L\n",
+    "            print('Chosen: R')\n",
+    "            main_function(R,k-len(L))\n",
+    "        elif len(L) +1 > k: #if K is Smaller than length if R, dicard R\n",
+    "            print('Chosen: L')\n",
+    "            main_function(L,k)            \n",
+    "    "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "button": false,
+    "new_sheet": false,
+    "run_control": {
+     "read_only": false
+    }
+   },
+   "source": [
+    "## Testing\n",
+    "For full credit, you must also test your solution so that you can prove to the grade your solution works."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "button": false,
+    "new_sheet": false,
+    "run_control": {
+     "read_only": false
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Desired answer: 6873\n",
+      "\n",
+      "Current K= 100\n",
+      "Pivot is: 4933.5\n",
+      "Chosen: R\n",
+      "Current K= 28\n",
+      "Pivot is: 7532.5\n",
+      "Chosen: L\n",
+      "Current K= 28\n",
+      "Pivot is: 6532.0\n",
+      "Chosen: R\n",
+      "Current K= 8\n",
+      "Pivot is: 7175.0\n",
+      "Chosen: L\n",
+      "Current K= 8\n",
+      "Pivot is: 6841.0\n",
+      "Chosen: R\n",
+      "Current K= 2\n",
+      "\n",
+      "Answer: 6873\n"
+     ]
+    }
+   ],
+   "source": [
+    "#Test 1\n",
+    "a = random.sample(range(0,9999),150)\n",
+    "sorted_a = sorted(a)\n",
+    "k = 100;\n",
+    "print('Desired answer: ' + str(sorted_a[k-1]))\n",
+    "print('')        \n",
+    "main_function(a,k)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Desired answer: 80671\n",
+      "\n",
+      "Current K= 9999\n",
+      "Pivot is: 49974.0\n",
+      "Chosen: R\n",
+      "Current K= 3802\n",
+      "Pivot is: 74419.0\n",
+      "Chosen: R\n",
+      "Current K= 763\n",
+      "Pivot is: 87153.5\n",
+      "Chosen: L\n",
+      "Current K= 763\n",
+      "Pivot is: 80843.0\n",
+      "Chosen: L\n",
+      "Current K= 763\n",
+      "Pivot is: 77816.0\n",
+      "Chosen: R\n",
+      "Current K= 360\n",
+      "Pivot is: 79455.5\n",
+      "Chosen: R\n",
+      "Current K= 164\n",
+      "Pivot is: 80115.5\n",
+      "Chosen: R\n",
+      "Current K= 70\n",
+      "Pivot is: 80491.0\n",
+      "Chosen: R\n",
+      "Current K= 28\n",
+      "Pivot is: 80661.0\n",
+      "\n",
+      "Answer : 80671\n"
+     ]
+    }
+   ],
+   "source": [
+    "#Test 2\n",
+    "a = random.sample(range(0,100000),12344)\n",
+    "sorted_a = sorted(a)\n",
+    "k = 9999;\n",
+    "print('Desired answer: ' + str(sorted_a[k-1]))\n",
+    "print('')        \n",
+    "main_function(a,k)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Calculation of O(n)\n",
+    "+ Dividing an array A into chunks of 5 takes O(n)\n",
+    "+ Getting a median of each chunk takes O(n), since getting a median takes O(1)\n",
+    "+ Getting a median of median takes T(n/5) (It is recursive, hence using T(x))\n",
+    "+ Creating two sides takes O(n)\n",
+    "+ Recursively calling the function again takes T(7/10n). It is reduced to 7/10n due to usage of median which can rule out 30% of n \n",
+    "+ getting a mininum number from a list is O(n)\n",
+    "+ performing sort on 5 element require negligible computation\n",
+    "\n",
+    "\n",
+    "\\begin{align}\n",
+    "\\ T(n) = O(n) + T(\\frac{n}{5}) + T(\\frac{7n}{10})\n",
+    "\\end{align}\n",
+    "\n",
+    "Since it is a recursive function, we have to employ induction to calculate big O\n",
+    "Assuming that \n",
+    "\n",
+    "\\begin{align}\n",
+    "Cn \\ge T(n), \n",
+    "\\end{align} \n",
+    "\n",
+    "\n",
+    "\\begin{align}\n",
+    "Cn \\ge an + T(\\frac{n}{5}) + T(\\frac{7n}{10})\n",
+    "\\end{align}\n",
+    "\n",
+    "\\begin{align}\n",
+    "Cn \\ge an + C\\frac{n}{5} + C\\frac{7n}{10}\n",
+    "\\end{align}\n",
+    "\n",
+    "\\begin{align}\n",
+    "Cn \\ge an + C\\frac{n}{5} + C\\frac{7n}{10}\n",
+    "\\end{align}\n",
+    "\n",
+    "\\begin{align}\n",
+    "Cn \\ge an + C\\frac{9n}{10}\n",
+    "\\end{align}\n",
+    "\n",
+    "\\begin{align}\n",
+    "C \\ge a + C\\frac{9}{10}\n",
+    "\\end{align}\n",
+    "\n",
+    "\\begin{align}\n",
+    "C\\frac{1}{10} \\ge a  \n",
+    "\\end{align}\n",
+    "\n",
+    "\\begin{align}\n",
+    "C \\ge 10a  \n",
+    "\\end{align}\n",
+    "\n",
+    "Thus, \n",
+    "\n",
+    "\\begin{align}\n",
+    "T(n) = O(n)  \n",
+    "\\end{align}\n",
+    "\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Note: All codes are originally written by Jong Hwi Park\n",
+    "\n",
+    "Reference list:\n",
+    "+ [Median finding algorithm by Arjun Saraswat and Nishant Kapoor] [identification tag for link]\n",
+    "\n",
+    "[identification tag for link]: http://www.cs.cornell.edu/courses/cs2110/2009su/Lectures/examples/MedianFinding.pdf \"CS2110 Lecture note, Cornell University\"\n",
+    "\n",
+    "+ [Median of Medians by Wikipedia] [identification tag for link]\n",
+    "\n",
+    "[identification tag for link]:https://en.wikipedia.org/wiki/Median_of_medians \"Wikipedia link to median of medians\"\n",
+    "\n",
+    "+ [Design and Analysis of Algorithms by MIT Opencourseware] [identification tag for link]\n",
+    "\n",
+    "[identification tag for link]:https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-046j-design-and-analysis-of-algorithms-spring-2012/lecture-notes/MIT6_046JS12_lec01.pdf \"EECS 6-046j Lecture 1, MIT\""
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.4"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
